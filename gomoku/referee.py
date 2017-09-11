@@ -76,7 +76,7 @@ class Move(object):
         self.y = y_loc
 
     def __str__(self):
-        return "%s %s %s" % (self.team_name, self.x, self.y)
+        return "%s %s %s" % (self.team_name, chr(self.x + ord('a')), self.y)
 
 class Game(object):
     def __init__(self, size_x=board_width, size_y=board_height, length_to_win=length_to_win):
@@ -214,6 +214,7 @@ def readMoveFile(move_file="move_file", purge=True):
     line_parts = line.split()
     team_name = line_parts[0]
     move_x = int(line_parts[1], 10)
+    move_x = ord(line_parts[1].lower()) - ord('a')
     move_y = int(line_parts[2], 10)
 
     move = Move(team_name, move_x, move_y)
