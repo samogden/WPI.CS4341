@@ -196,6 +196,7 @@ def cleanGame():
 
 if __name__ == "__main__":
     pass
+    _ = raw_input("Press Enter to start testing...")
     logging.info("Checking losing traces")
     for i, trace in enumerate(getLosingTraces()):
         logging.info("Running trace %s" % (i,))
