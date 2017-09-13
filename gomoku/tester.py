@@ -7,7 +7,7 @@ import random
 
 logging.basicConfig(format='%(levelname)s:  %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__file__)
-logging.info("loading %s" % __file__)
+logging.info("loading %s" % (__file__))
 
 
 board_height = 8
@@ -20,6 +20,7 @@ move_file_name = "move_file"
 
 
 
+team_names = ["team1", "team2"]
 
 class Move(object):
     def __init__(self, team_name, x_loc, y_loc):
@@ -28,7 +29,8 @@ class Move(object):
         self.y = y_loc
 
     def __str__(self):
-        return "%s %s %s" % (self.team_name, self.x, self.y)
+        col_str = chr(self.x + ord('a'))
+        return "%s %s %s" % (self.team_name, col_str, self.y)
 
 
 def getLosingTraces():
@@ -40,11 +42,11 @@ def getLosingTraces():
         Move("team1", 0, 0)
     ]
 
-    # Fails due to moving out of order (first turn)
-    yield [
-        Move("team1", 0, 0),
-        Move("team1", 1, 0)
-    ]
+## Fails due to moving out of order (first turn)
+#yield [
+#Move("team1", 0, 0),
+#Move("team1", 1, 0)
+#]
 
     # Fails due to moving out of order (after first turn)
     yield [
@@ -155,16 +157,67 @@ def waitForTurn(team_name):
     return True
 
 
-def writeMoveFile(move, move_msg, move_file="move_file"):
+def writeMoveFile(move, move_file="move_file"):
     with open(move_file, 'w') as move_fid:
-        move_text = str(move) + " : " + move_msg
+        move_text = str(move)
         logging.debug("Writing move text \"%s\" to %s" % (move_text, move_file))
         move_fid.write(move_text)
         move_fid.write("\n")
         move_fid.flush()
     return True
 
+def swapTeamname(move):
+    move.team_name = team_names[(team_names.index(move.team_name) + 1)%len(team_names)]
+
+def playGame(trace):
+    if os.path.isfile("team2.go"):
+        swap_teamname = True
+    else:
+        swap_teamname = False
+    for move in trace:
+        if swap_teamname:
+            swapTeamname(move)
+        logging.debug("%s ready for turn...." % move.team_name)
+        waitForTurn(move.team_name)
+        time.sleep(0.5)
+        writeMoveFile(move)
+        time.sleep(0.5)
+
+
+def getTeamFileName(team_name):
+    return team_name + ".go"
+
+
+def cleanGame():
+    files_to_delete = ["move_file", "end_game"] + [getTeamFileName(s) for s in team_names]
+    for file_name in files_to_delete:
+        if os.path.isfile(file_name):
+            os.remove(file_name)
+
 if __name__ == "__main__":
     pass
-
+    logging.info("Checking losing traces")
+    for i, trace in enumerate(getLosingTraces()):
+        logging.info("Running trace %s" % (i,))
+        playGame(trace)
+        _ = raw_input("Press Enter to clean directory...")
+        cleanGame()
+        _ = raw_input("Press Enter to run next trace....")
+        print ""
+    logging.info("Checking winning traces")
+    for i, trace in enumerate(getWinningTraces()):
+        logging.info("Running trace %s" % (i,))
+        playGame(trace)
+        _ = raw_input("Press Enter to clean directory...")
+        cleanGame()
+        _ = raw_input("Press Enter to run next trace....")
+        print ""
+    logging.info("Checking tying traces")
+    for i, trace in enumerate(getTieingTraces()):
+        logging.info("Running trace %s" % (i,))
+        playGame(trace)
+        _ = raw_input("Press Enter to clean directory...")
+        cleanGame()
+        _ = raw_input("Press Enter to run next trace....")
+        print ""
 
