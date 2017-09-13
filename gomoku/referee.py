@@ -8,7 +8,8 @@ import time
 
 logging.basicConfig(format='%(levelname)s:  %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__file__)
-logging.info("loading %s" % (__file__))
+
+#logging.info("loading %s" % (__file__))
 
 board_height = 8
 board_width = 8
@@ -278,7 +279,7 @@ def waitForPlay(prev_mod_info, move_file_name="move_file"):
 
 
 def play_gomoku(team1, team2):
-    logging.info("Let the battle between %s and %s begin!", (team1, team2))
+    logging.info("Let the battle between %s and %s begin!" % (team1, team2))
     teams = [team1, team2]
     random.shuffle(teams)
 
