@@ -232,7 +232,7 @@ def initMoveFile(move_file="move_file"):
 
 def writeMoveFile(move, move_msg, move_file="move_file"):
     with open(move_file, 'w') as move_fid:
-        move_text = str(move) + " : " + move_msg
+        move_text = str(move) # + " : " + move_msg
         logging.debug("Writing move text \"%s\" to %s" % (move_text, move_file))
         move_fid.write(move_text)
         move_fid.write("\n")
