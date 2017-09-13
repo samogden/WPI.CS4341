@@ -213,7 +213,7 @@ def readMoveFile(move_file="move_file", purge=True):
 
     line_parts = line.split()
     team_name = line_parts[0]
-    move_x = int(line_parts[1], 10)
+    #move_x = int(line_parts[1], 10)
     move_x = ord(line_parts[1].lower()) - ord('a')
     move_y = int(line_parts[2], 10)
 
@@ -237,6 +237,13 @@ def writeMoveFile(move, move_msg, move_file="move_file"):
         move_fid.write(move_text)
         move_fid.write("\n")
         move_fid.flush()
+    return os.stat(move_file_name).st_mtime
+
+def writeEndFile(move_msg, end_file="end_game"):
+    with open(end_file, 'w') as end_fid:
+        end_fid.write(move_msg)
+        end_fid.write("\n")
+        end_fid.flush()
     return os.stat(move_file_name).st_mtime
 
 
@@ -289,9 +296,11 @@ def play_gomoku(team1, team2):
         logging.debug("Played in time: %s" % played_in_time)
         if not played_in_time:
             logging.error("Out of time!")
-            logging.info("%s loses!" % (up_to_play))
-            logging.info("%s wins!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
-            move_msg = "LOST : out of time"
+            win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+            lose_team = up_to_play
+            logging.info("%s loses!" % (win_team,))
+            logging.info("%s wins!" % (lose_team,))
+            move_msg = "END: %s WINS!  %s LOSES!  out of time" % (win_team, lose_team,)
             playing_game = False
             move = Move(up_to_play, -1, -1)
         else:
@@ -302,39 +311,49 @@ def play_gomoku(team1, team2):
 
             if move.team_name != up_to_play:
                 logging.error("Wait your turn!")
-                logging.info("%s loses!" % (up_to_play))
-                logging.info("%s wins!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
-                move_msg = "LOST : out of order move"
+                win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                lose_team = up_to_play
+                logging.info("%s loses!" % (win_team,))
+                logging.info("%s wins!" % (lose_team,))
+                move_msg = "END: %s WINS!  %s LOSES!  out of order move" % (win_team, lose_team,)
                 playing_game = False
             elif not game.isValidMove(move):
                 logging.error("Invalid move!")
-                logging.info("%s loses!" % (up_to_play))
-                logging.info("%s wins!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
-                move_msg = "LOST : invalid move"
+                win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                lose_team = up_to_play
+                logging.info("%s loses!" % (win_team,))
+                logging.info("%s wins!" % (lose_team,))
+                move_msg = "END: %s WINS!  %s LOSES!  invalid move" % (win_team, lose_team,)
                 playing_game = False
             else:
                 game.makeMove(move)
                 if game.checkForWin():
-                    logging.info("%s wins!" % (up_to_play))
-                    logging.info("%s loses!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
-                    move_msg = "WIN : %s in a row!" % (game.length_to_win)
+                    #logging.info("%s wins!" % (up_to_play))
+                    #logging.info("%s loses!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
+                    #move_msg = "WIN : %s in a row!" % (game.length_to_win)
+                    win_team = up_to_play
+                    lose_team =teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                    logging.info("%s loses!" % (win_team,))
+                    logging.info("%s wins!" % (lose_team,))
+                    move_msg = "END: %s WINS!  %s LOSES!  %s in a row!" % (win_team, lose_team, game.length_to_win)
                     playing_game = False
 
         if game.isBoardFull():
             logging.info("Tie game!")
-            move_msg = "TIE : board full!"
+            move_msg = "END: TIE! board full!"
+            playing_game = False
 
         if playing_game:
-            move_msg = "KEEP GOING!"
+            move_msg = "" #"KEEP GOING!"
 
         move_file_mod_info = writeMoveFile(move, move_msg, move_file_name)
 
         pass
         #playing_game = False
         logging.info("")
-
-
-
+    writeEndFile(move_msg)
+    for team in teams:
+        writeTeamGoFile(team)
     pass
 
 
