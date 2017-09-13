@@ -8,7 +8,7 @@ import time
 
 logging.basicConfig(format='%(levelname)s:  %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__file__)
-logging.info("loading %s" % __file__)
+logging.info("loading %s" % (__file__))
 
 board_height = 8
 board_width = 8
