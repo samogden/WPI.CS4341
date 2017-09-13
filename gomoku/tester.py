@@ -10,11 +10,11 @@ logger = logging.getLogger(__file__)
 logging.info("loading %s" % (__file__))
 
 
-board_height = 8
-board_width = 8
-length_to_win = 4
+board_height = 15
+board_width = 15
+length_to_win = 5
 
-turn_length_in_seconds = 60
+turn_length_in_seconds = 10
 
 move_file_name = "move_file"
 
