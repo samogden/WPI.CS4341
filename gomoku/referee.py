@@ -133,7 +133,7 @@ class Game(object):
                     if y_fits_on_board:
                         y_set = list(set([board[x][y + delta] for delta in range(self.length_to_win)]))
                     else:
-                        x_set = [None]
+                        y_set = [None]
 
                     if diagf_fits_on_board:
                         diagf_set = list(set([board[x + delta][y + delta] for delta in range(self.length_to_win)]))
