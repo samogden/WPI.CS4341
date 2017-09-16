@@ -320,7 +320,7 @@ def play_gomoku(team1, team2):
                 playing_game = False
             elif not game.isValidMove(move):
                 logging.error("Invalid move!")
-                win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                win_team = teams[ (teams.index(up_to_play)-1) % len(teams) ]
                 lose_team = up_to_play
                 logging.info("%s loses!" % (win_team,))
                 logging.info("%s wins!" % (lose_team,))
