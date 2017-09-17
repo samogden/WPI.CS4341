@@ -283,6 +283,9 @@ def play_gomoku(team1, team2):
     teams = [team1, team2]
     random.shuffle(teams)
 
+    def opponentOf(team):
+        return teams[ (teams.index(team) - 1) % len(teams) ]
+
     game = Game(board_width, board_height, length_to_win)
 
     playing_game = True
@@ -297,7 +300,7 @@ def play_gomoku(team1, team2):
         logging.debug("Played in time: %s" % played_in_time)
         if not played_in_time:
             logging.error("Out of time!")
-            win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+            win_team = opponentOf(up_to_play)
             lose_team = up_to_play
             logging.info("%s loses!" % (win_team,))
             logging.info("%s wins!" % (lose_team,))
@@ -312,15 +315,15 @@ def play_gomoku(team1, team2):
 
             if move.team_name != up_to_play:
                 logging.error("Wait your turn!")
-                win_team = up_to_play
-                lose_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                win_team = opponentOf(up_to_play)
+                lose_team = up_to_play
                 logging.info("%s loses!" % (win_team,))
                 logging.info("%s wins!" % (lose_team,))
                 move_msg = "END: %s WINS!  %s LOSES!  out of order move" % (win_team, lose_team,)
                 playing_game = False
             elif not game.isValidMove(move):
                 logging.error("Invalid move!")
-                win_team = teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                win_team = opponentOf(up_to_play)
                 lose_team = up_to_play
                 logging.info("%s loses!" % (win_team,))
                 logging.info("%s wins!" % (lose_team,))
@@ -333,7 +336,7 @@ def play_gomoku(team1, team2):
                     #logging.info("%s loses!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
                     #move_msg = "WIN : %s in a row!" % (game.length_to_win)
                     win_team = up_to_play
-                    lose_team =teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ]
+                    lose_team = opponentOf(up_to_play)
                     logging.info("%s loses!" % (win_team,))
                     logging.info("%s wins!" % (lose_team,))
                     move_msg = "END: %s WINS!  %s LOSES!  %s in a row!" % (win_team, lose_team, game.length_to_win)
