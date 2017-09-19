@@ -351,9 +351,8 @@ def play_gomoku(team1, team2):
             move_msg = "" #"KEEP GOING!"
 
         move_file_mod_info = writeMoveFile(move, move_msg, move_file_name)
-
-        pass
-        #playing_game = False
+        time.sleep(1)
+        
         logging.info("")
     writeEndFile(move_msg)
     for team in teams:
