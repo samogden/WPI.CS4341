@@ -128,76 +128,36 @@ class Game(object):
                     if x_fits_on_board:
                         x_set = list(set([board[x + delta][y] for delta in range(self.length_to_win)]))
                     else:
-                        x_set = [None]
+                        x_set = []
 
                     if y_fits_on_board:
                         y_set = list(set([board[x][y + delta] for delta in range(self.length_to_win)]))
                     else:
-                        y_set = [None]
+                        y_set = []
 
                     if diagf_fits_on_board:
                         diagf_set = list(set([board[x + delta][y + delta] for delta in range(self.length_to_win)]))
                     else:
-                        diagf_set = [None]
+                        diagf_set = []
 
                     if diagb_fits_on_board:
                         diagb_set = list(set([board[x + delta][y - delta] for delta in range(self.length_to_win)]))
                     else:
-                        diagb_set = [None]
+                        diagb_set = []
 
                     # Now check the responses
 
                     if ((len(x_set) == 1)):
-                        color = x_set[0]
-                        try:
-                            below = board[x - 1][y]
-                        except IndexError:
-                            below = None
-                        try:
-                            above = board[x + self.length_to_win][y]
-                        except IndexError:
-                            above = None
-                        if (color != below) and (color != above):
-                            return True
+                        return True
 
                     if ((len(y_set) == 1)):
-                        color = y_set[0]
-                        try:
-                            below = board[x][y - 1]
-                        except IndexError:
-                            below = None
-                        try:
-                            above = board[x][y + self.length_to_win]
-                        except IndexError:
-                            above = None
-                        if (color != below) and (color != above):
-                            return True
+                        return True
 
                     if ((len(diagf_set) == 1)):
-                        color = diagf_set[0]
-                        try:
-                            below = board[x - 1][y - 1]
-                        except IndexError:
-                            below = None
-                        try:
-                            above = board[x + self.length_to_win][y + self.length_to_win]
-                        except IndexError:
-                            above = None
-                        if (color != below) and (color != above):
-                            return True
+                        return True
 
                     if ((len(diagb_set) == 1)):
-                        color = diagb_set[0]
-                        try:
-                            below = board[x - 1][y - 1]
-                        except IndexError:
-                            below = None
-                        try:
-                            above = board[x + self.length_to_win][y + self.length_to_win]
-                        except IndexError:
-                            above = None
-                        if (color != below) and (color != above):
-                            return True
+                        eturn True
         return False
 
     def isBoardFull(self):
