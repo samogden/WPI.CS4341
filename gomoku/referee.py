@@ -74,10 +74,10 @@ class Move(object):
     def __init__(self, team_name, x_loc, y_loc):
         self.team_name = team_name
         self.x = x_loc
-        self.y = y_loc
+        self.y = y_loc - 1
 
     def __str__(self):
-        return "%s %s %s" % (self.team_name, chr(self.x + ord('a')), self.y)
+        return "%s %s %s" % (self.team_name, chr(self.x + ord('a')), (self.y + 1))
 
 class Game(object):
     def __init__(self, size_x=board_width, size_y=board_height, length_to_win=length_to_win):
