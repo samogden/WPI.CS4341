@@ -43,6 +43,7 @@ class GomokuBoard(object):
                                             for x in range(width)]
 
         self.init_field() #originally used to init minefield, but not really useful here...
+        self.move_history = []
 
     def init_field(self):
         pass
@@ -55,6 +56,7 @@ class GomokuBoard(object):
         return self._field[x][y].isEmpty
 
     def placeToken(self, move):
+        self.move_history.append(move)
         return self._field[move.x][move.y].playField(move.team_name)
 
     def getBoard(self):
@@ -207,6 +209,13 @@ def writeEndFile(move_msg, end_file="end_game"):
         end_fid.flush()
     return os.stat(move_file_name).st_mtime
 
+def writeHistoryFile(board, history_File="history_file"):
+    with open(history_File, 'w') as history_fid:
+        for move in board.move_history:
+            history_fid.write(str(move))
+            history_fid.write("\n")
+    return True
+
 
 def getTeamFileName(team_name):
     return team_name + ".go"
@@ -316,6 +325,7 @@ def play_gomoku(team1, team2):
         
         logging.info("")
     writeEndFile(move_msg)
+    writeHistoryFile(game.board)
     for team in teams:
         writeTeamGoFile(team)
     pass
