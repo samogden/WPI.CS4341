@@ -139,7 +139,7 @@ class Game(object):
                     x_fits_on_board = ( x + self.length_to_win < self.board.width )
                     y_fits_on_board = ( y + self.length_to_win < self.board.height )
                     diagf_fits_on_board = ( x + self.length_to_win < self.board.width ) and ( y + self.length_to_win < self.board.height )
-                    diagb_fits_on_board = ( x + self.length_to_win < self.board.width ) and ( y - self.length_to_win > 0 )
+                    diagb_fits_on_board = ( x + self.length_to_win < self.board.width ) and ( y + self.length_to_win > 0 )
 
                     # Generate lists of pieces on board
                     if x_fits_on_board:
