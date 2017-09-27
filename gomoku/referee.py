@@ -5,6 +5,7 @@ import sys
 import os
 import random
 import time
+import hashlib
 
 logging.basicConfig(format='%(levelname)s:  %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__file__)
@@ -49,7 +50,7 @@ class GomokuBoard(object):
         pass
 
     def __getitem__(self, index):
-        x, y = index
+        (x, y) = index
         return self._field[x][y]
 
     def isFieldOpen(self, (x,y)):
@@ -64,6 +65,19 @@ class GomokuBoard(object):
                  for x in range(self.width)]
 
         return board
+    
+    def printBoard(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                if self._field[x][y].team is None:
+                    sys.stdout.write('-')
+                else:
+                    team_name_hash = hashlib.md5(self._field[x][y].team).hexdigest()
+                    sys.stdout.write(team_name_hash[0])
+                sys.stdout.write(' ')
+            sys.stdout.write('\n')
+            
+        sys.stdout.flush()
 
     def isFull(self):
         for x in range(self.width):
@@ -71,6 +85,7 @@ class GomokuBoard(object):
                 if self.isFieldOpen( (x, y) ):
                     return False
         return True
+        
 
 class Move(object):
     def __init__(self, team_name, x_loc, y_loc):
@@ -164,6 +179,9 @@ class Game(object):
 
     def isBoardFull(self):
         return self.board.isFull()
+    
+    def printBoard(self):
+        self.board.printBoard()
 
 
 def readMoveFile(move_file="move_file", purge=True):
@@ -301,6 +319,7 @@ def play_gomoku(team1, team2):
                 playing_game = False
             else:
                 game.makeMove(move)
+                game.printBoard()
                 if game.checkForWin():
                     #logging.info("%s wins!" % (up_to_play))
                     #logging.info("%s loses!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
