@@ -250,6 +250,7 @@ def play_gomoku(team1, team2):
 
     playing_game = True
     move_file_mod_info = initMoveFile(move_file_name)
+    time.sleep(1)
     while (playing_game):
         up_to_play = teams[ (game.turn % len(teams)) ]
         logging.info("%s's turn!" % up_to_play)
