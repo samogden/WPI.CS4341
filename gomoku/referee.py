@@ -290,8 +290,8 @@ def play_gomoku(team1, team2):
             logging.error("Out of time!")
             win_team = opponentOf(up_to_play)
             lose_team = up_to_play
-            logging.info("%s loses!" % (win_team,))
-            logging.info("%s wins!" % (lose_team,))
+            logging.info("%s loses!" % (lose_team,))
+            logging.info("%s wins!" % (win_team,))
             move_msg = "END: %s WINS!  %s LOSES!  out of time" % (win_team, lose_team,)
             playing_game = False
             move = Move(up_to_play, -1, -1)
@@ -305,16 +305,16 @@ def play_gomoku(team1, team2):
                 logging.error("Wait your turn!")
                 win_team = opponentOf(up_to_play)
                 lose_team = up_to_play
-                logging.info("%s loses!" % (win_team,))
-                logging.info("%s wins!" % (lose_team,))
+                logging.info("%s loses!" % (lose_team,))
+                logging.info("%s wins!" % (win_team,))
                 move_msg = "END: %s WINS!  %s LOSES!  out of order move" % (win_team, lose_team,)
                 playing_game = False
             elif not game.isValidMove(move):
                 logging.error("Invalid move!")
                 win_team = opponentOf(up_to_play)
                 lose_team = up_to_play
-                logging.info("%s loses!" % (win_team,))
-                logging.info("%s wins!" % (lose_team,))
+                logging.info("%s loses!" % (lose_team,))
+                logging.info("%s wins!" % (win_team,))
                 move_msg = "END: %s WINS!  %s LOSES!  invalid move" % (win_team, lose_team,)
                 playing_game = False
             else:
@@ -326,8 +326,8 @@ def play_gomoku(team1, team2):
                     #move_msg = "WIN : %s in a row!" % (game.length_to_win)
                     win_team = up_to_play
                     lose_team = opponentOf(up_to_play)
-                    logging.info("%s loses!" % (win_team,))
-                    logging.info("%s wins!" % (lose_team,))
+                    logging.info("%s loses!" % (lose_team,))
+                    logging.info("%s wins!" % (win_team,))
                     move_msg = "END: %s WINS!  %s LOSES!  %s in a row!" % (win_team, lose_team, game.length_to_win)
                     playing_game = False
 
