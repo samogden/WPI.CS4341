@@ -69,14 +69,18 @@ class GomokuBoard(object):
 
         return board
     
-    def printBoard(self):
+    def printBoard(self, teams):
         for y in range(self.height):
             for x in range(self.width):
                 if self._field[x][y].team is None:
                     sys.stdout.write('-')
                 else:
-                    team_name_hash = hashlib.md5(self._field[x][y].team).hexdigest()
-                    sys.stdout.write(team_name_hash[0])
+                    #team_name_hash = hashlib.md5(self._field[x][y].team).hexdigest()
+                    if teams.index(self._field[x][y].team) == 0:
+                        team_color = 'W'
+                    else:
+                        team_color = 'B'
+                    sys.stdout.write(team_color)
                 sys.stdout.write(' ')
             sys.stdout.write('\n')
             
@@ -188,8 +192,8 @@ class Game(object):
     def isBoardFull(self):
         return self.board.isFull()
     
-    def printBoard(self):
-        self.board.printBoard()
+    def printBoard(self, teams):
+        self.board.printBoard(teams)
 
     def getCopy(self):
         return copy.deepcopy(self)
@@ -343,7 +347,7 @@ def play_gomoku(team1, team2):
                 playing_game = False
             else:
                 game.makeMove(move)
-                game.printBoard()
+                game.printBoard(teams)
                 if game.checkForWin():
                     #logging.info("%s wins!" % (up_to_play))
                     #logging.info("%s loses!" % teams[ (game.turn + (teams.index(up_to_play)-1)) % len(teams) ])
