@@ -6,6 +6,9 @@ import os
 import random
 import time
 import hashlib
+import shutil
+
+import copy
 
 logging.basicConfig(format='%(levelname)s:  %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__file__)
@@ -85,6 +88,11 @@ class GomokuBoard(object):
                 if self.isFieldOpen( (x, y) ):
                     return False
         return True
+
+    def getEmptyFields(self):
+        return [[(x, y) for y in range(self.height)]
+                        for x in range(self.width)
+                            if self.isFieldOpen((x, y))]
         
 
 class Move(object):
@@ -183,6 +191,15 @@ class Game(object):
     def printBoard(self):
         self.board.printBoard()
 
+    def getCopy(self):
+        return copy.deepcopy(self)
+
+    def getAvailableMoves(self, team):
+        return [Move(team, x, y) for (x, y) in self.board.getEmptyFields()]
+
+    def getBoard(self):
+        return self.board.getBoard()
+
 
 def readMoveFile(move_file="move_file", purge=True):
     with open(move_file) as move_fid:
@@ -193,10 +210,16 @@ def readMoveFile(move_file="move_file", purge=True):
     logging.debug("Read from %s: \"%s\"" % (move_file, line))
 
     line_parts = line.split()
-    team_name = line_parts[0]
-    #move_x = int(line_parts[1], 10)
-    move_x = ord(line_parts[1].lower()) - ord('a')
-    move_y = int(line_parts[2], 10)
+    try:
+        team_name = line_parts[0]
+        move_x = ord(line_parts[1].lower()) - ord('a')
+        move_y = int(line_parts[2], 10)
+    except IndexError:
+        logging.debug("Problems reading the move file")
+        shutil.copyfile(move_file, "%s.bkup" % move_file)
+        team_name = None
+        move_x = -1
+        move_y = -1
 
     move = Move(team_name, move_x, move_y)
 
@@ -211,9 +234,9 @@ def initMoveFile(move_file="move_file"):
     return os.stat(move_file_name).st_mtime
 
 
-def writeMoveFile(move, move_msg, move_file="move_file"):
+def writeMoveFile(move, move_file="move_file"):
     with open(move_file, 'w') as move_fid:
-        move_text = str(move) # + " : " + move_msg
+        move_text = str(move)
         logging.debug("Writing move text \"%s\" to %s" % (move_text, move_file))
         move_fid.write(move_text)
         move_fid.write("\n")
@@ -302,6 +325,7 @@ def play_gomoku(team1, team2):
             removeTeamGoFile(up_to_play)
 
             if move.team_name != up_to_play:
+                # Note: this section may need to be taken with a grain of salt
                 logging.error("Wait your turn!")
                 win_team = opponentOf(up_to_play)
                 lose_team = up_to_play
@@ -339,7 +363,7 @@ def play_gomoku(team1, team2):
         if playing_game:
             move_msg = "" #"KEEP GOING!"
 
-        move_file_mod_info = writeMoveFile(move, move_msg, move_file_name)
+        move_file_mod_info = writeMoveFile(move, move_file_name)
         time.sleep(1)
         
         logging.info("")
