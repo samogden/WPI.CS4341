@@ -292,7 +292,11 @@ def waitForPlay(prev_mod_info, move_file_name="move_file"):
     return played_in_time
 
 
+
+
 def play_gomoku(team1, team2):
+
+
     logging.info("Let the battle between %s and %s begin!" % (team1, team2))
     teams = [team1, team2]
     random.shuffle(teams)
