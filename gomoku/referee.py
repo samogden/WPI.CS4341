@@ -70,16 +70,25 @@ class GomokuBoard(object):
         return board
     
     def printBoard(self, teams):
+        print ""
+        print "%s -- %s" % ('X', teams[0])
+        print "%s -- %s" % ('O', teams[1])
+        print ""
+        sys.stdout.write("   ")
+        for x in range(self.width):
+            sys.stdout.write('%s ' % (chr(x+ord('A'))))
+        sys.stdout.write("\n")
         for y in range(self.height):
+            sys.stdout.write('%02s ' % (y+1))
             for x in range(self.width):
                 if self._field[x][y].team is None:
                     sys.stdout.write('-')
                 else:
                     #team_name_hash = hashlib.md5(self._field[x][y].team).hexdigest()
                     if teams.index(self._field[x][y].team) == 0:
-                        team_color = 'W'
+                        team_color = 'X'
                     else:
-                        team_color = 'B'
+                        team_color = 'O'
                     sys.stdout.write(team_color)
                 sys.stdout.write(' ')
             sys.stdout.write('\n')
@@ -228,7 +237,10 @@ def readMoveFile(move_file="move_file", purge=True):
     move = Move(team_name, move_x, move_y)
 
     if purge:
-        os.remove(move_file)
+        try:
+            os.remove(move_file)
+        except OSError:
+            pass
 
     return move
 
@@ -276,7 +288,10 @@ def writeTeamGoFile(team_name):
 
 def removeTeamGoFile(team_name):
     team_go_file = getTeamFileName(team_name)
-    os.remove(team_go_file)
+    try:
+        os.remove(team_go_file)
+    except OSError:
+        pass
 
 
 def waitForPlay(prev_mod_info, move_file_name="move_file"):
@@ -335,8 +350,8 @@ def play_gomoku(team1, team2):
             if move.team_name != up_to_play:
                 # Note: this section may need to be taken with a grain of salt
                 logging.error("Wait your turn!")
-                win_team = opponentOf(up_to_play)
-                lose_team = up_to_play
+                win_team = up_to_play
+                lose_team = opponentOf(up_to_play)
                 logging.info("%s loses!" % (lose_team,))
                 logging.info("%s wins!" % (win_team,))
                 move_msg = "END: %s WINS!  %s LOSES!  out of order move" % (win_team, lose_team,)
