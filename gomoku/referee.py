@@ -298,10 +298,15 @@ def waitForPlay(prev_mod_info, move_file_name="move_file"):
 
     played_in_time = True
     timeout = time.time() + turn_length_in_seconds
-    while( os.stat(move_file_name).st_mtime == prev_mod_info):
+    this_mod_info = os.stat(move_file_name).st_mtime
+    while( this_mod_info == prev_mod_info):
         if time.time() >= timeout:
             played_in_time = False
             break
+        try:
+            this_mod_info = os.stat(move_file_name).st_mtime
+        except WindowsError:
+            pass
         time.sleep(0.05)
     time.sleep(0.10) # a little bit extra to allow for file writeout to occur)
     return played_in_time
