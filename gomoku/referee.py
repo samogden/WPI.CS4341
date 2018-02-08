@@ -1,3 +1,5 @@
+#!env python
+
 import logging
 import sys
 import os
@@ -5,8 +7,6 @@ import random
 import time
 import hashlib
 import shutil
-from itertools import islice
-
 
 import copy
 
@@ -106,34 +106,7 @@ class GomokuBoard(object):
         return [[(x, y) for y in range(self.height)]
                         for x in range(self.width)
                             if self.isFieldOpen((x, y))]
-
-
-def getRows(grid):
-    return [[c for c in r] for r in grid]
-
-def getCols(grid):
-    return zip(*grid)
-
-def getBackwardDiagonals(grid):
-    b = [None] * (len(grid) - 1)
-    grid = [b[i:] + r + b[:i] for i, r in enumerate(getRows(grid))]
-    return [[c for c in r if not c is None] for r in getCols(grid)]
-
-def getForwardDiagonals(grid):
-    b = [None] * (len(grid) - 1)
-    grid = [b[:i] + r + b[i:] for i, r in enumerate(getRows(grid))]
-    return [[c for c in r if not c is None] for r in getCols(grid)]   
-
-def window(seq, n=2):
-    "Returns a sliding window (of width n) over data from the iterable"
-    "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
-    it = iter(seq)
-    result = tuple(islice(it, n))
-    if len(result) == n:
-        yield result
-    for elem in it:
-        result = result[1:] + (elem,)
-        yield result
+        
 
 class Move(object):
     def __init__(self, team_name, x_loc, y_loc):
@@ -176,15 +149,54 @@ class Game(object):
             return False
 
     def checkForWin(self):
-        board = self.board.getBoard()
-        sections = getRows(board) + getCols(board) + getForwardDiagonals(board) + getBackwardDiagonals(board)
-        for section in sections:
-            for w in window(section, n=self.length_to_win):
-                sset = list(set(section))
-                if len(sset) == 1 and sset[0] != None:
-                    return True
-        return False
 
+        board = self.board.getBoard()
+
+        for x in range(self.board.width):
+            for y in range(self.board.height):
+                if board[x][y] != None:
+
+                    # Are these boundaries computed right??
+                    x_fits_on_board = ( x + self.length_to_win < self.board.width )
+                    y_fits_on_board = ( y + self.length_to_win < self.board.height )
+                    diagf_fits_on_board = ( x + self.length_to_win < self.board.width ) and ( y + self.length_to_win < self.board.height )
+                    diagb_fits_on_board = ( x + self.length_to_win < self.board.width ) and ( y + self.length_to_win > 0 )
+
+                    # Generate lists of pieces on board
+                    if x_fits_on_board:
+                        x_set = list(set([board[x + delta][y] for delta in range(self.length_to_win)]))
+                    else:
+                        x_set = []
+
+                    if y_fits_on_board:
+                        y_set = list(set([board[x][y + delta] for delta in range(self.length_to_win)]))
+                    else:
+                        y_set = []
+
+                    if diagf_fits_on_board:
+                        diagf_set = list(set([board[x + delta][y + delta] for delta in range(self.length_to_win)]))
+                    else:
+                        diagf_set = []
+
+                    if diagb_fits_on_board:
+                        diagb_set = list(set([board[x + delta][y - delta] for delta in range(self.length_to_win)]))
+                    else:
+                        diagb_set = []
+
+                    # Now check the responses
+
+                    if ((len(x_set) == 1)):
+                        return True
+
+                    if ((len(y_set) == 1)):
+                        return True
+
+                    if ((len(diagf_set) == 1)):
+                        return True
+
+                    if ((len(diagb_set) == 1)):
+                        return True
+        return False
 
     def isBoardFull(self):
         return self.board.isFull()
